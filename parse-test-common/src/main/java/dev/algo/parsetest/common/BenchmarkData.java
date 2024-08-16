@@ -9,13 +9,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Generic class representing BenchmarkData for a parser producing the generic type T as AST
  * @param <T>
  */
 public class BenchmarkData <T>{
+
+    private static final Logger logger = Logger.getLogger(BenchmarkData.class.getName());
 
     private final Path folderPath;
     private final List<SingleParseBenchmark<T>> benchmarks;
@@ -27,24 +31,26 @@ public class BenchmarkData <T>{
      * Initialize the {@link BenchmarkData} with path pointing to a folder and an extension to identify the files to parse
      * @param folderPath {@link Path} to the containing folder
      * @param extension String representing the extension
-     * @throws IOException
+     * @throws IOException can be triggered by walking the folder in search of the files
      */
     public BenchmarkData(Path folderPath, String extension) throws IOException {
         this.folderPath = folderPath;
-        this.benchmarks = Files.walk(this.folderPath)
-                .filter(path -> path.toString().endsWith(extension))
-                .map(path -> {
-                    try {
-                        return new SingleParseBenchmark<T>(path);
-                    } catch (IOException e) {
-                        throw new RuntimeException("Error reading file: " + path, e);
-                    }
-                })
-                .collect(Collectors.toList());
+        try (Stream<Path> pathStream = Files.walk(folderPath)) {
+            this.benchmarks = pathStream
+                    .filter(path -> path.toString().endsWith(extension))
+                    .map(this::createSingleParseBenchmark)
+                    .filter(Objects::nonNull)
+                    .toList();
+        }
     }
 
-    public Path getFolderPath() {
-        return folderPath;
+    private SingleParseBenchmark<T> createSingleParseBenchmark(Path path)  {
+        try {
+            return new SingleParseBenchmark<>(path);
+        } catch (IOException e) {
+            logger.severe("Error reading file: " + path);
+            return null;
+        }
     }
 
     public List<SingleParseBenchmark<T>> getBenchmarks() {
@@ -82,11 +88,21 @@ public class BenchmarkData <T>{
     }
 
     /**
-     * Return a JSON representation of the benchmark results, excluding inputs and ASTs
-     * @return
-     * @throws JsonProcessingException
+     * Return a simplified JSON representation of the benchmark results.
+     * @return simplified JSON representation
+     * @throws JsonProcessingException in case the JSON processing fails
      */
     public String toJson() throws JsonProcessingException {
+        return toJson(false);
+    }
+
+    /**
+     * Return a JSON representation of the benchmark results, excluding inputs and ASTs
+     * @param detailed true to get a detailed representation
+     * @return the JSON representation
+     * @throws JsonProcessingException in case the JSON processing fails
+     */
+    public String toJson(boolean detailed) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode rootNode = mapper.createObjectNode();
 
@@ -95,12 +111,14 @@ public class BenchmarkData <T>{
         rootNode.put("total_parsing_time_ms", getTotalParsingTime());
         rootNode.put("total_memory_used_kb", getTotalMemoryUsed());
 
-        ArrayNode benchmarkArray = rootNode.putArray("benchmarks");
-        for (SingleParseBenchmark<T> benchmark : benchmarks) {
-            ObjectNode benchmarkNode = mapper.createObjectNode();
-            benchmarkNode.put("file_name", benchmark.getFilePath().getFileName().toString());
-            benchmarkNode.put("parse_time_ms", benchmark.getParseDuration());
-            benchmarkArray.add(benchmarkNode);
+        if(detailed){
+            ArrayNode benchmarkArray = rootNode.putArray("benchmarks");
+            for (SingleParseBenchmark<T> benchmark : benchmarks) {
+                ObjectNode benchmarkNode = mapper.createObjectNode();
+                benchmarkNode.put("file_name", benchmark.getFilePath().getFileName().toString());
+                benchmarkNode.put("parse_time_ms", benchmark.getParseDuration());
+                benchmarkArray.add(benchmarkNode);
+            }
         }
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
     }

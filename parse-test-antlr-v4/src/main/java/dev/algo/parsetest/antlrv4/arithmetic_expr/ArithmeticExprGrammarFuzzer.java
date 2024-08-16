@@ -4,7 +4,6 @@ import dev.algo.parsetest.antlrv4.grammar.arithmetic_expr.ArithmeticExprLexer;
 import dev.algo.parsetest.antlrv4.grammar.arithmetic_expr.ArithmeticExprParser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -31,9 +30,9 @@ public class ArithmeticExprGrammarFuzzer {
      */
     public String generateInput(String complexity){
         return switch (complexity.toLowerCase()) {
-            case SMALL -> generateExpression(randomBetween(3,5));
-            case MEDIUM -> generateExpression(randomBetween(6,12));
-            case LARGE -> generateExpression(randomBetween(13,20));
+            case SMALL -> generateExpression(randomBetween(3,8));
+            case MEDIUM -> generateExpression(randomBetween(7,16));
+            case LARGE -> generateExpression(randomBetween(17,30));
             default -> throw
                     new IllegalArgumentException(String.format("Unrecognized complexity: %s, it should be in %s",
                             complexity, Arrays.toString(new String[]{SMALL, MEDIUM, LARGE})));
@@ -93,8 +92,8 @@ public class ArithmeticExprGrammarFuzzer {
 
     /**
      * Tell if the input is valid for the ArithmeticExpr grammar
-     * @param input
-     * @return
+     * @param input ArithmeticExpr input
+     * @return true if valid
      */
     public boolean isValidInput(String input){
         try{
