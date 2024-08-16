@@ -1,4 +1,4 @@
-package dev.algo;
+package dev.algo.parsetest.kolasuv15;
 
 public class Main {
     public static void main(String[] args) {
