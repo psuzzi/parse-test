@@ -32,10 +32,10 @@ class ArithmeticExprGrammarFuzzerTest {
         assertNotNull(medium, "Medium input is null");
         assertNotNull(large, "Large input is null");
 
-        // set to info to see sample output on console
-        logger.info("SMALL: " + small);
-        logger.info("MEDIUM: " + medium);
-        logger.info("LARGE: " + large);
+        // set to info to see the sample output on console
+        logger.fine("SMALL: " + small);
+        logger.fine("MEDIUM: " + medium);
+        logger.fine("LARGE: " + large);
 
         assertTrue(fuzzer.isValidInput(small), "Small input should be valid");
         assertTrue(fuzzer.isValidInput(medium), "Medium input should be valid");
