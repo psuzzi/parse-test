@@ -3,7 +3,45 @@
 This project is for comparing the performances of different parsers. 
 It was build in order to solve this kolasu issue: https://github.com/Strumenta/kolasu/issues/354
 
-Maven multi-module project with the following structure
+The benchmarks are under `parse-test-benchmark`.
+
+## Prerequisites
+- Java 17
+- Maven 3
+
+## Benchmark
+
+A simple way to run the benchmark is to run `mvn clean package`, which includes running al tests.
+
+```
+git clone git@github.com:psuzzi/parse-test.git
+cd parse-test
+mvn clean package
+```
+
+The results are printed by tests, in JSON format: 
+
+```
+Aug 16, 2024 5:29:48 PM dev.algo.parsetest.benchmark.AntlrArithmeticExprBenchmarkTest testFullBenchmarkArithmeticExprInProvidedFolder
+INFO: FULL TEST
+{
+  "folder_path" : "./parse-test/parse-test-benchmark/target/test-classes/arithmetic_expr_gen",
+  "number_of_files" : 90,
+  "total_parsing_time_ms" : 571,
+  "total_memory_used_kb" : 290325
+}
+```
+
+### CI Results
+
+This project has a CI build.
+Check the results under https://github.com/psuzzi/parse-test/actions. 
+- Drill down under the latest successful pipeline run > build > Test With Maven.
+- In the console out, search for `FULL TEST` preceding the JSON result
+
+## Architecture
+
+This is a maven multi-module project, not yet published on maven central. 
 
 ```
 parse-test
@@ -13,55 +51,38 @@ parse-test
 └── parse-test-kolasu-v1-5
 ```
 
-To run the benchmark, build the project, and then execute the tests under `parse-test-benchmark`
+I choose to use maven to simplify the usage of some legacy framework.
+The subprojects are written in Java and Kotlin. 
+- As an example of a Java parser project, see `parse-test-antlr-v4`
+- As an example of a Kotlin/Java parser, see `parse-test-kolasu-v1-5`
 
-### Results
+### Build
 
-This project has a CI build, so you can check the results under https://github.com/psuzzi/parse-test/actions. 
-- Drill down under the latest successful pipeline run > build > Test With Maven.
-- In the console out, you can see INFO level output with JSON files representing the benchmark results
+In general, I prefer building with `mvn clean package`.
+That's because `mvn clan install` pollutes my local maven repo.
 
-Below you see an example of how the result will show up in the console:
+If you need to run a specific plugin goal for a module, use the `-pl` flag from the root project.
+For instance `mvn antlr4:antlr -pl parse-test-antlr-v4` generates the ANTLR artefacts.
 
-```
-Aug 16, 2024 5:29:48 PM dev.algo.parsetest.benchmark.AntlrArithmeticExprBenchmarkTest testFullBenchmarkArithmeticExprInProvidedFolder
-INFO: FULL TEST
-{
-  "folder_path" : "/home/runner/work/parse-test/parse-test/parse-test-benchmark/target/test-classes/arithmetic_expr_gen",
-  "number_of_files" : 90,
-  "total_parsing_time_ms" : 571,
-  "total_memory_used_kb" : 290325
-}
-```
+In case of issues with the first build, feel free use the Maven Reactor: 
+When building use `mvn clean install -U` from the parent directory.
+This will ensure all modules are built in the correct order, using the most Updated version.
 
+After installing the modules locally, you can selectively cleanup as follows
 
-## Multi-module build
-
-This is a multi-module project, not yet published to maven-central. If you want to contribute to it, you might have some issues.
-Below, you see a few hints, in case you are stuck with it
-
-### First Build
-
-If the first build doesn't run, it's because the `parse-test-common` is unpublished. You can fix this by executing a `mvn install` just for that project.
-
-
-### Cleanup
-
-After installing the modules locally, to selectively clean do this:
 ```
 mvn dependency:purge-local-repository -DmanualInclude=dev.algo:parse-test,dev.algo:parse-test-antlr-v4,dev.algo:parse-test-benchmark,dev.algo:parse-test-common,,dev.algo:parse-test-kolasu-v1-5
 ```
 
-## Future Changes
+The GitHub CI is governed by the `.github/workflows/maven.yml`
 
-### Add more tests
+## Contributing
 
-To add more parser tests as additional modules, look at `parse-test-antlr-v4` or `parse-test-kolasu-v1-5`.
-Once the parser is added, add a new XXXBenchmark into `parse-test-benchmark`
+Feel free to open issues
+To contribute improvements or add more parser tests, just open a PR.
+For adding a new parser modules, look at `parse-test-antlr-v4` or `parse-test-kolasu-v1-5`.
+For adding a new XXXBenchmark, look into `parse-test-benchmark`
 
-### Improve the build
+## License
 
-Since this is a maven multi-module project, we could take advantage od the Maven's reactor, so:
-  - run maven commands from the root directory of the multi-module project `parse-test`
-  - use `mvn clean package` instead of `mvn install` to build your project without installing artifacts in your local repository
-  - if you need to run a specific plugin goal for a module, use the `-pl` flag. For example: `mvn antlr4:antlr -pl parse-test-antlr-v4`
+This repository is dual-licensed Apache2 and EPL 2.0
