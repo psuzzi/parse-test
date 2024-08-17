@@ -1,5 +1,6 @@
 package dev.algo.parsetest.kolasuv15.arithmetic_expr
 
+import dev.algo.parsetest.kolasuv15.ArithmeticExprKolasuParser
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import java.util.logging.Logger

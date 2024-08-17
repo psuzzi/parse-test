@@ -38,6 +38,7 @@
 
     <build>
         <plugins>
+
             <!-- Kotlin compiled before Java sources, see https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -74,6 +75,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!-- compile Java sources after Kotlin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -122,6 +124,20 @@
                 <configuration>
                     <outputDirectory>${project.build.directory}/generated-sources/antlr4/</outputDirectory>
                     <visitor>true</visitor><!-- Needed to generate the *ParserBaseVisitor-->
+                </configuration>
+            </plugin>
+
+            <!-- JAR plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>dev.algo.parsetest.kolasuv15.MainKt</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
 

@@ -1,4 +1,4 @@
-package dev.algo.parsetest.antlrv4.arithmetic_expr;
+package dev.algo.parsetest.antlrv4;
 
 import dev.algo.parsetest.antlrv4.grammar.arithmetic_expr.ArithmeticExprLexer;
 import dev.algo.parsetest.antlrv4.grammar.arithmetic_expr.ArithmeticExprParser;

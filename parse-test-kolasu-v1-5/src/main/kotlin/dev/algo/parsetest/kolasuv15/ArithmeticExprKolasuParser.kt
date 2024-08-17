@@ -1,4 +1,4 @@
-package dev.algo.parsetest.kolasuv15.arithmetic_expr
+package dev.algo.parsetest.kolasuv15
 
 import com.strumenta.kolasu.model.Point
 import com.strumenta.kolasu.model.Position
@@ -11,12 +11,17 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.Token
 
 /**
- * Entry point responsible to set up the ANTLR lexer and parser, and construct the AST
+ * Kolasu Parser, responsible to construct the AST from the input
+ * Entry point responsible to
  */
 class ArithmeticExprKolasuParser {
+    /**
+     * Parse by setting up the ANTLR lexer and parser, and constructing the Kolasu AST
+     */
     fun parse(input: String): Expression {
         val lexer = ArithmeticExprLexer(CharStreams.fromString(input))
         val parser = ArithmeticExprParser(CommonTokenStream(lexer))
+        // Root expression as (Node) AST
         return ExpressionBuilder().visitExpr(parser.expr())
     }
 }

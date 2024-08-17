@@ -1,7 +1,7 @@
 package dev.algo.parsetest.benchmark;
 
-import dev.algo.parsetest.antlrv4.arithmetic_expr.ArithmeticExprGrammarFuzzer;
-import dev.algo.parsetest.benchmark.utils.GenerateTestCases;
+import dev.algo.parsetest.antlrv4.ArithmeticExprGrammarFuzzer;
+import dev.algo.parsetest.benchmark.util.GenerateTestCases;
 import dev.algo.parsetest.common.BenchmarkData;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,18 +27,18 @@ class AntlrArithmeticExprBenchmarkTest {
     @TempDir
     Path tempDir;
 
-    private ArithmeticExprGrammarFuzzer aeFuzzer;
+    private ArithmeticExprGrammarFuzzer fuzzer;
 
     @BeforeEach
     void setup() throws IOException {
         logger.info("Initialize Test");
-        aeFuzzer = new ArithmeticExprGrammarFuzzer();
+        fuzzer = new ArithmeticExprGrammarFuzzer();
 
         Files.writeString(tempDir.resolve("test1.ae"), "2 + 3 * 4");
         Files.writeString(tempDir.resolve("test2.ae"), "5 - 1 / 2");
-        Files.writeString(tempDir.resolve("small.ae"), aeFuzzer.generateInput("small"));
-        Files.writeString(tempDir.resolve("medium.ae"), aeFuzzer.generateInput("medium"));
-        Files.writeString(tempDir.resolve("large.ae"), aeFuzzer.generateInput("large"));
+        Files.writeString(tempDir.resolve("small.ae"), fuzzer.generateInput("small"));
+        Files.writeString(tempDir.resolve("medium.ae"), fuzzer.generateInput("medium"));
+        Files.writeString(tempDir.resolve("large.ae"), fuzzer.generateInput("large"));
     }
 
     /**
@@ -47,9 +47,9 @@ class AntlrArithmeticExprBenchmarkTest {
      */
     @Test
     void testSmokeBenchmarkArithmeticExprInTempFolder() throws IOException {
-        AntlrArithmeticExprBenchmark antlrArithmeticExprBenchmark = new AntlrArithmeticExprBenchmark(Path.of(tempDir.toString()));
+        AntlrArithmeticExprBenchmark benchmark = new AntlrArithmeticExprBenchmark(Path.of(tempDir.toString()));
 
-        BenchmarkData<ParseTree> data = antlrArithmeticExprBenchmark.executeBenchmark();
+        BenchmarkData<ParseTree> data = benchmark.executeBenchmark();
         assertNotNull(data, "Benchmark data should not be null");
 
         assertEquals(5, data.getNumberOfFiles(), "Expected number of parsed files");
@@ -70,24 +70,24 @@ class AntlrArithmeticExprBenchmarkTest {
         logger.fine("MEDIUM: " + medium);
         logger.fine("LARGE: " + large);
 
-        assertTrue(aeFuzzer.isValidInput(small), "Small input should be valid");
-        assertTrue(aeFuzzer.isValidInput(medium), "Medium input should be valid");
-        assertTrue(aeFuzzer.isValidInput(large), "Large input should be valid");
+        assertTrue(fuzzer.isValidInput(small), "Small input should be valid");
+        assertTrue(fuzzer.isValidInput(medium), "Medium input should be valid");
+        assertTrue(fuzzer.isValidInput(large), "Large input should be valid");
     }
 
     /**
      * The most complete test, against tens of generated inputs, stored in the project.
-     * See also: {@link dev.algo.parsetest.benchmark.utils.GenerateTestCases}
+     * See also: {@link GenerateTestCases}
      */
     @Test
     void testFullBenchmarkArithmeticExprInProvidedFolder() throws IOException, URISyntaxException {
         Path folderPath = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(GenerateTestCases.ARITHMETIC_EXPR_GEN)).toURI());
-        AntlrArithmeticExprBenchmark antlrArithmeticExprBenchmark = new AntlrArithmeticExprBenchmark(folderPath);
-        BenchmarkData<ParseTree> data = antlrArithmeticExprBenchmark.executeBenchmark();
+        AntlrArithmeticExprBenchmark benchmark = new AntlrArithmeticExprBenchmark(folderPath);
+        BenchmarkData<ParseTree> data = benchmark.executeBenchmark();
         assertNotNull(data, "Benchmark data should not be null");
 
         assertEquals(90, data.getNumberOfFiles(), "Expected number of parsed files");
-        logger.info("FULL TEST" + BR + data.toJson());
+        logger.info("ANTLR FULL TEST" + BR + data.toJson());
 
     }
 }

@@ -1,5 +1,6 @@
 package dev.algo.parsetest.antlrv4.arithmetic_expr;
 
+import dev.algo.parsetest.antlrv4.ArithmeticExprGrammarFuzzer;
 import org.junit.jupiter.api.Test;
 
 import java.util.logging.Logger;

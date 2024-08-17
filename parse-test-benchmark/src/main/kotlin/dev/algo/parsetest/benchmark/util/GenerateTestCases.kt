@@ -1,31 +1,35 @@
-package dev.algo.parsetest.benchmark.utils;
+package dev.algo.parsetest.benchmark.util
 
-import dev.algo.parsetest.antlrv4.arithmetic_expr.ArithmeticExprGrammarFuzzer;
+import dev.algo.parsetest.antlrv4.ArithmeticExprGrammarFuzzer
+import java.io.IOException
+import java.io.UncheckedIOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.logging.Logger
+import kotlin.io.path.*
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.stream.Stream;
+
+private const val SAMPLE_PREFIX = "Sample"
+private const val N_SAMPLES = 30
+private const val EXT_AE = "ae"
 
 /**
  * Utility class responsible of generating sample files to test
  */
-public final class GenerateTestCases {
+object GenerateTestCases {
 
-    public static final String ARITHMETIC_EXPR_GEN = "arithmetic_expr_gen";
-    public static final Path PATH_AE_GEN = Path.of("parse-test-benchmark/src/test/resources/", ARITHMETIC_EXPR_GEN);
+    private val logger = Logger.getLogger(this::class.java.name)
 
-    private GenerateTestCases(){
-        // Prevent instantiation of utility class
-    }
+    const val ARITHMETIC_EXPR_GEN: String = "arithmetic_expr_gen"
+    private val PATH_AE_GEN: Path = Path.of("parse-test-benchmark/src/test/resources/", ARITHMETIC_EXPR_GEN)
 
     /**
      * Triggers the generation of the sample files.
      * @param args unused
      */
-    public static void main(String[] args)  {
-        GenerateTestCases.generateArithmeticExprSamples(PATH_AE_GEN);
+    @JvmStatic
+    fun main(args: Array<String>) {
+        generateArithmeticExprSamples(PATH_AE_GEN)
     }
 
     /**
@@ -33,11 +37,11 @@ public final class GenerateTestCases {
      *
      * @param folderPath where to generate the samples
      */
-    public static void generateArithmeticExprSamples(Path folderPath) {
-        checkFolderAndCleanup(folderPath, ".ae");
-        generateArithmeticExprSamples(folderPath, "Sample", "small", 30);
-        generateArithmeticExprSamples(folderPath, "Sample", "medium", 30);
-        generateArithmeticExprSamples(folderPath, "Sample", "large", 30);
+    private fun generateArithmeticExprSamples(folderPath: Path) {
+        checkFolderAndCleanup(folderPath, EXT_AE)
+        generateArithmeticExprSamples(folderPath, SAMPLE_PREFIX, "small", N_SAMPLES)
+        generateArithmeticExprSamples(folderPath, SAMPLE_PREFIX, "medium", N_SAMPLES)
+        generateArithmeticExprSamples(folderPath, SAMPLE_PREFIX, "large", N_SAMPLES)
     }
 
     /**
@@ -46,39 +50,54 @@ public final class GenerateTestCases {
      * @param folderPath path to the folder
      * @param extension extension of files to cleanup
      */
-    private static void checkFolderAndCleanup(Path folderPath, String extension){
+    private fun checkFolderAndCleanup(folderPath: Path, extension: String) {
+        logger.info("Check and cleanup folder $folderPath.")
+        var deleted = 0
         try {
-            Files.createDirectories(folderPath);
-            try (Stream<Path> files = Files.walk(folderPath)) {
-                files.filter(Files::isRegularFile).filter(p -> p.toString().endsWith(extension)).forEach(path -> {
+            Files.createDirectories(folderPath)
+            Files.walk(folderPath)
+                .filter{ it.isRegularFile() && it.extension == extension }
+                .forEach{ file ->
                     try {
-                        Files.delete(path);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException("Could not delete file " + path, e);
+                        file.deleteExisting()
+                        deleted ++
+                    } catch (e: IOException) {
+                        throw UncheckedIOException("Could not delete file $file", e)
                     }
-                });
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to setup or clean folder " + folderPath, e);
+                }
+        } catch (e: IOException) {
+            throw UncheckedIOException("Failed to setup or clean folder $folderPath", e)
+        }
+        if (deleted > 0) {
+            logger.info("Cleanup: deleted $deleted *.$extension files.")
         }
     }
 
-    private static void generateArithmeticExprSamples(Path folderPath, String prefix, String complexity, int nSamples) {
-        int padding = String.valueOf(nSamples).length();
-        ArithmeticExprGrammarFuzzer fuzzer = new ArithmeticExprGrammarFuzzer();
-
-        for (int i = 0; i < nSamples; i++) {
-            String input = fuzzer.generateInput(complexity);
-            String formattedNumber = String.format("%0" + padding + "d", i + 1);
-            String filename = String.format("%s_%s_%s.ae", prefix, complexity, formattedNumber );
-            Path filePath = folderPath.resolve(filename);
+    /**
+     * Generate a set of nSamples sample files with specified prefix and complexity in the given folder
+     */
+    private fun generateArithmeticExprSamples(
+        folderPath: Path,
+        prefix: String,
+        complexity: String,
+        nSamples: Int
+    ) {
+        val fuzzer = ArithmeticExprGrammarFuzzer()
+        var nGenerated = 0
+        (1..nSamples).forEach { i ->
+            val input = fuzzer.generateInput(complexity)
+            // e.g. "Sample_small_01.ae"
+            val filename = "${prefix}_${complexity}_%0${nSamples.toString().length}d.ae".format(i)
+            val filePath = folderPath.resolve(filename)
             try {
-                Files.writeString(filePath,input);
-            } catch (IOException e) {
-                throw new UncheckedIOException("Failed to generate sample file " + filePath, e);
+                filePath.writeText(input)
+                nGenerated++
+            } catch (e: IOException) {
+                throw UncheckedIOException("Failed to generate sample file $filePath", e)
             }
         }
+        if (nGenerated > 0) {
+            logger.info("Generated $nGenerated sample files named ${prefix}_${complexity}_*.ae ")
+        }
     }
-
-
 }

@@ -1,4 +1,4 @@
-package dev.algo.parsetest.kolasuv15.arithmetic_expr
+package dev.algo.parsetest.kolasuv15
 
 import com.strumenta.kolasu.model.Node
 
