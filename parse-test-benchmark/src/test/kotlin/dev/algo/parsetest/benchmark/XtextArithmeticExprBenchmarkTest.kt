@@ -2,23 +2,27 @@ package dev.algo.parsetest.benchmark
 
 import dev.algo.parsetest.antlrv4.ArithmeticExprGrammarFuzzer
 import dev.algo.parsetest.benchmark.util.GenerateTestCases
+import dev.algo.parsetest.common.BenchmarkData
+import dev.algo.parsetest.xtext.arithmeticExpr.Model
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
+import java.io.IOException
+import java.net.URISyntaxException
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.logging.Logger
 import kotlin.io.path.writeText
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class KolasuArithmeticExprBenchmarkTest {
+class XtextArithmeticExprBenchmarkTest {
 
-    companion object{
-        private val logger = Logger.getLogger(KolasuArithmeticExprBenchmarkTest::class.java.name)
-        private val BR = System.lineSeparator()
+    companion object {
+        private val logger: Logger = Logger.getLogger(XtextArithmeticExprBenchmarkTest::class.java.name)
+        private val BR: String = System.lineSeparator()
     }
 
     @TempDir
@@ -45,14 +49,15 @@ class KolasuArithmeticExprBenchmarkTest {
 
     /**
      * Smoke test, check we can read files from a temporary directory
+     * @throws IOException can be triggered by test
      */
     @Test
     fun testSmokeBenchmarkArithmeticExprInTempFolder() {
-        val benchmark = KolasuArithmeticExprBenchmark(tempDir)
-        val data = benchmark.executeBenchmark()
+        val benchmark = XtextArithmeticExprBenchmark(tempDir)
+        val data: BenchmarkData<Model?> = benchmark.executeBenchmark()
         assertNotNull(data, "Benchmark data should not be null")
         assertEquals(5, data.numberOfFiles, "Expected number of parsed files")
-        logger.info("KOLASU 1.5 SMOKE TEST$BR${data.toJson(true)}")
+        logger.info("XTEXT SMOKE TEST $BR ${data.toJson(true)}")
     }
 
     /**
@@ -60,18 +65,20 @@ class KolasuArithmeticExprBenchmarkTest {
      * See also: [GenerateTestCases]
      */
     @Test
+    @Throws(IOException::class, URISyntaxException::class)
     fun testFullBenchmarkArithmeticExprInProvidedFolder() {
         val benchmarkFolderName = GenerateTestCases.ARITHMETIC_EXPR_GEN
         val benchmarkFolderPath = javaClass.classLoader.getResource(benchmarkFolderName)?.toURI()?.let { Paths.get(it) }
             ?: throw IllegalStateException("Cannot find benchmark folder: $benchmarkFolderName")
 
-        val benchmark = KolasuArithmeticExprBenchmark(benchmarkFolderPath)
-        val data = benchmark.executeBenchmark()
+        val benchmark = XtextArithmeticExprBenchmark(benchmarkFolderPath)
+        val data: BenchmarkData<Model?> = benchmark.executeBenchmark()
 
-        assertNotNull(data) { "Benchmark data should not be null" }
-        assertEquals(90, data.numberOfFiles) { "Expected number of parsed files" }
+        assertNotNull(data, "Benchmark data should not be null")
+        assertEquals(90, data.numberOfFiles, "Expected number of parsed files")
 
-        logger.info("KOLASU 1.5 FULL TEST $BR ${data.toJson()}")
+        logger.info("XTEXT FULL TEST $BR ${data.toJson()}")
     }
+
 
 }

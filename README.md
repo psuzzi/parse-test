@@ -80,26 +80,16 @@ The subprojects are written in Java and Kotlin.
 In general, I prefer building with `mvn clean package`.
 That's because `mvn clan install` pollutes my local maven repo.
 
-The GitHub CI is governed by the `.github/workflows/maven.yml`.
-In the CI we execute `mvn -B package --file pom.xml`
+The GitHub CI is governed by the `.github/workflows/maven.yml`, which executes:
+```
+mvn -B package --file pom.xml
+mvn test
+```
 
 If you need to run a specific plugin goal for a module, use the `-pl` flag from the root project.
 For instance `mvn antlr4:antlr -pl parse-test-antlr-v4` generates the ANTLR artefacts.
 
-In case of issues with the first build, feel free use the Maven Reactor:
-When building use `mvn clean install -U` from the parent directory.
-This will ensure all modules are built in the correct order, using the most Updated version.
-
-After installing the modules locally, you can selectively cleanup your local mvn repo as follows:
-
-```
-mvn dependency:purge-local-repository -DmanualInclude=dev.algo:parse-test,dev.algo:parse-test-antlr-v4,dev.algo:parse-test-benchmark,dev.algo:parse-test-common,dev.algo:parse-test-kolasu-v1-5,dev.algo:parse-test-xtext
-```
-
-### Module builds
-
-You can cleanly build sub packages starting from the root dir and executing the following commands.
-Note I'm using `-am` (also make) instead of `-amd` (also make dependents)
+You can cleanly build submodules starting from the root dir and executing the following commands:
 
 ```
 mvn clean
@@ -108,6 +98,16 @@ mvn clean package -pl parse-test-antlr-v4 -am
 mvn clean package -pl parse-test-kolasu-v1-5 -am
 mvn clean package -pl parse-test-xtext-parent -am
 mvn clean package -pl parse-test-benchmark -am
+```
+
+In case of issues with the first build, feel free use the Maven Reactor:
+When building use `mvn clean install -U` from the parent directory.
+This will ensure all modules are built in the correct order, using the most Updated version.
+
+After installing the modules locally, you can selectively cleanup your local mvn repo as follows:
+
+```
+mvn dependency:purge-local-repository -DmanualInclude=dev.algo:parse-test,dev.algo:parse-test-antlr-v4,dev.algo:parse-test-benchmark,dev.algo:parse-test-common,dev.algo:parse-test-kolasu-v1-5,dev.algo:parse-test-xtext-parent,dev.algo:parse-test-xtext
 ```
 
 ## Troubleshooting

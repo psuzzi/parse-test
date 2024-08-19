@@ -8,17 +8,21 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
+import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.*
 import java.util.logging.Logger
 import kotlin.io.path.writeText
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class KolasuArithmeticExprBenchmarkTest {
+internal class AntlrArithmeticExprBenchmarkTest {
 
-    companion object{
-        private val logger = Logger.getLogger(KolasuArithmeticExprBenchmarkTest::class.java.name)
-        private val BR = System.lineSeparator()
+    companion object {
+        private val logger: Logger = Logger.getLogger(AntlrArithmeticExprBenchmarkTest::class.java.name)
+        private val BR: String = System.lineSeparator()
     }
 
     @TempDir
@@ -27,6 +31,7 @@ class KolasuArithmeticExprBenchmarkTest {
     private lateinit var fuzzer: ArithmeticExprGrammarFuzzer
 
     @BeforeEach
+    @Throws(IOException::class)
     fun setup() {
         logger.info("Initialize Test")
         fuzzer = ArithmeticExprGrammarFuzzer()
@@ -44,15 +49,32 @@ class KolasuArithmeticExprBenchmarkTest {
     }
 
     /**
-     * Smoke test, check we can read files from a temporary directory
+     * Fuzzer Smoke test, verifies we can run the tests against generated inputs
+     * @throws IOException can be triggered by test
      */
     @Test
+    @Throws(IOException::class)
+    fun testSmokeBenchmarkArithmeticExprGeneratedInputs() {
+        val inputSizes = listOf("small", "medium", "large")
+        inputSizes.forEach { size ->
+            val input = Files.readString(tempDir.resolve("$size.ae"))
+            logger.info("${size.uppercase()}: $input")
+            assertTrue(fuzzer.isValidInput(input), "$size input should be valid")
+        }
+    }
+
+    /**
+     * Smoke test, check we can read files from a temporary directory
+     * @throws IOException can be triggered by test
+     */
+    @Test
+    @Throws(IOException::class)
     fun testSmokeBenchmarkArithmeticExprInTempFolder() {
-        val benchmark = KolasuArithmeticExprBenchmark(tempDir)
+        val benchmark = AntlrArithmeticExprBenchmark(tempDir)
         val data = benchmark.executeBenchmark()
         assertNotNull(data, "Benchmark data should not be null")
         assertEquals(5, data.numberOfFiles, "Expected number of parsed files")
-        logger.info("KOLASU 1.5 SMOKE TEST$BR${data.toJson(true)}")
+        logger.info("ANTLR 4 SMOKE TEST $BR ${data.toJson(true)}")
     }
 
     /**
@@ -65,13 +87,13 @@ class KolasuArithmeticExprBenchmarkTest {
         val benchmarkFolderPath = javaClass.classLoader.getResource(benchmarkFolderName)?.toURI()?.let { Paths.get(it) }
             ?: throw IllegalStateException("Cannot find benchmark folder: $benchmarkFolderName")
 
-        val benchmark = KolasuArithmeticExprBenchmark(benchmarkFolderPath)
+        val benchmark = AntlrArithmeticExprBenchmark(benchmarkFolderPath)
         val data = benchmark.executeBenchmark()
 
-        assertNotNull(data) { "Benchmark data should not be null" }
-        assertEquals(90, data.numberOfFiles) { "Expected number of parsed files" }
+        assertNotNull(data, "Benchmark data should not be null")
+        assertEquals(90, data.numberOfFiles, "Expected number of parsed files")
 
-        logger.info("KOLASU 1.5 FULL TEST $BR ${data.toJson()}")
+        logger.info("ANTLR 4 FULL TEST $BR ${data.toJson()}")
     }
 
 }
