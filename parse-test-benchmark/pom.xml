@@ -41,20 +41,23 @@
     </dependencies>
 
     <build>
+
+        <!-- Kotlin: never forget this -->
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
         <plugins>
             <!-- Kotlin compiled before Java sources, see https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
-                <extensions>true</extensions> <!-- You can set this option
-            to automatically take information about lifecycles -->
+<!--                <extensions>true</extensions>-->
                 <executions>
                     <execution>
                         <id>compile</id>
                         <goals>
-                            <goal>compile</goal> <!-- You can skip the <goals> element
-                        if you enable extensions for the plugin -->
+                            <goal>compile</goal>
                         </goals>
                         <configuration>
                             <sourceDirs>
@@ -66,13 +69,12 @@
                     <execution>
                         <id>test-compile</id>
                         <goals>
-                            <goal>test-compile</goal> <!-- You can skip the <goals> element
-                    if you enable extensions for the plugin -->
+                            <goal>test-compile</goal>
                         </goals>
                         <configuration>
                             <sourceDirs>
-                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                                <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -111,6 +113,21 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- JAR plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>dev.algo.parsetest.benchmark.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
