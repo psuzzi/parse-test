@@ -3,7 +3,7 @@ package dev.algo.parsetest.benchmark;
 import dev.algo.parsetest.antlrv4.ArithmeticExprGrammarFuzzer;
 import dev.algo.parsetest.benchmark.util.GenerateTestCases;
 import dev.algo.parsetest.common.BenchmarkData;
-import org.antlr.v4.runtime.tree.ParseTree;
+import dev.algo.parsetest.xtext.arithmeticExpr.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -16,11 +16,12 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class AntlrArithmeticExprBenchmarkTest {
+public class XtextArithmeticExprBenchmarkTest {
 
-    private static final Logger logger = Logger.getLogger(AntlrArithmeticExprBenchmarkTest.class.getName());
+    private final static Logger logger = Logger.getLogger(XtextArithmeticExprBenchmarkTest.class.getName());
 
     private static final String BR = System.lineSeparator();
 
@@ -47,32 +48,13 @@ class AntlrArithmeticExprBenchmarkTest {
      */
     @Test
     void testSmokeBenchmarkArithmeticExprInTempFolder() throws IOException {
-        AntlrArithmeticExprBenchmark benchmark = new AntlrArithmeticExprBenchmark(Path.of(tempDir.toString()));
+        XtextArithmeticExprBenchmark benchmark = new XtextArithmeticExprBenchmark(Path.of(tempDir.toString()));
 
-        BenchmarkData<ParseTree> data = benchmark.executeBenchmark();
+        BenchmarkData<Model> data = benchmark.executeBenchmark();
         assertNotNull(data, "Benchmark data should not be null");
 
         assertEquals(5, data.getNumberOfFiles(), "Expected number of parsed files");
-        logger.info("ANTLR SMOKE TEST" + BR + data.toJson(true));
-    }
-
-    /**
-     * Smoke test, verifies we can run the tests against generated inputs
-     * @throws IOException can be triggered by test
-     */
-    @Test
-    void testSmokeBenchmarkArithmeticExprGeneratedInputs() throws IOException {
-        String small = Files.readString(tempDir.resolve("small.ae"));
-        String medium = Files.readString(tempDir.resolve("medium.ae"));
-        String large = Files.readString(tempDir.resolve("large.ae"));
-
-        logger.fine("SMALL: " + small);
-        logger.fine("MEDIUM: " + medium);
-        logger.fine("LARGE: " + large);
-
-        assertTrue(fuzzer.isValidInput(small), "Small input should be valid");
-        assertTrue(fuzzer.isValidInput(medium), "Medium input should be valid");
-        assertTrue(fuzzer.isValidInput(large), "Large input should be valid");
+        logger.info("XTEXT SMOKE TEST" + BR + data.toJson(true));
     }
 
     /**
@@ -82,12 +64,13 @@ class AntlrArithmeticExprBenchmarkTest {
     @Test
     void testFullBenchmarkArithmeticExprInProvidedFolder() throws IOException, URISyntaxException {
         Path folderPath = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(GenerateTestCases.ARITHMETIC_EXPR_GEN)).toURI());
-        AntlrArithmeticExprBenchmark benchmark = new AntlrArithmeticExprBenchmark(folderPath);
-        BenchmarkData<ParseTree> data = benchmark.executeBenchmark();
+        XtextArithmeticExprBenchmark benchmark = new XtextArithmeticExprBenchmark(folderPath);
+        BenchmarkData<Model> data = benchmark.executeBenchmark();
         assertNotNull(data, "Benchmark data should not be null");
 
         assertEquals(90, data.getNumberOfFiles(), "Expected number of parsed files");
-        logger.info("ANTLR FULL TEST" + BR + data.toJson());
+        logger.info("XTEXT FULL TEST" + BR + data.toJson());
 
     }
+
 }

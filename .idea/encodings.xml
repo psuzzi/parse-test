@@ -9,6 +9,8 @@
     <file url="file://$PROJECT_DIR$/parse-test-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/parse-test-kolasu-v1-5/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/parse-test-kolasu-v1-5/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/parse-test-xtext-parent/parse-test-xtext/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/parse-test-xtext/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

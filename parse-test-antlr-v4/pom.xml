@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>parse-test-antlr-v4</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

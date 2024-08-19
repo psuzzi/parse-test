@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>parse-test-common</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

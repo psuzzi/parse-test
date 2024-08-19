@@ -50,7 +50,7 @@ class KolasuArithmeticExprBenchmarkTest {
         assertNotNull(data, "Benchmark data should not be null")
 
         assertEquals(5, data.numberOfFiles, "Expected number of parsed files")
-        logger.info("SMOKE TEST$BR${data.toJson(true)}")
+        logger.info("KOLASU SMOKE TEST$BR${data.toJson(true)}")
     }
 
     /**

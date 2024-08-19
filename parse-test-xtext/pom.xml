@@ -1,13 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>dev.algo</groupId>
-		<artifactId>parse-test-xtext-parent</artifactId>
+		<artifactId>parse-test</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>parse-test-xtext</artifactId>
 	<packaging>jar</packaging>
+
+	<properties>
+		<xtextVersion>2.34.0</xtextVersion>
+	</properties>
 
 	<build>
 		<plugins>
@@ -36,9 +43,26 @@
 					<cleanupDaemonThreads>false</cleanupDaemonThreads><!-- see https://bugs.eclipse.org/bugs/show_bug.cgi?id=475098#c3 -->
 				</configuration>
 			</plugin>
+
+			<!-- Xtend -->
 			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
+				<version>${xtextVersion}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>xtend-install-debug-info</goal>
+							<goal>testCompile</goal>
+							<goal>xtend-test-install-debug-info</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+					<testOutputDirectory>${basedir}/src/test/xtend-gen</testOutputDirectory>
+				</configuration>
 			</plugin>
 	
 			<plugin>
@@ -46,6 +70,18 @@
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets combine.children="append">
+						<fileset>
+							<directory>${basedir}/src/main/xtend-gen</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/src/test/xtend-gen</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
 						<fileset>
 							<directory>${basedir}/../parse-test-xtext/src/main/xtext-gen/</directory>
 							<includes>
@@ -186,6 +222,13 @@
 			<artifactId>org.eclipse.xtext.testing</artifactId>
 			<version>${xtextVersion}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>xtext-dev-bom</artifactId>
+			<version>${xtextVersion}</version>
+			<type>pom</type>
+			<scope>import</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>

@@ -10,6 +10,12 @@
     </parent>
 
     <artifactId>parse-test-kolasu-v1-5</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <main.class>dev.algo.parsetest.kolasuv15.MainKt</main.class>
+    </properties>
+
 
     <dependencies>
         <dependency>
@@ -17,10 +23,12 @@
             <artifactId>parse-test-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -29,11 +37,22 @@
         <dependency>
             <groupId>com.strumenta.kolasu</groupId>
             <artifactId>kolasu-core</artifactId>
+            <version>1.5.66</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
+            <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jetbrains.kotlin</groupId>-->
+<!--            <artifactId>kotlin-stdlib</artifactId>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -44,15 +63,14 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
-                <extensions>true</extensions> <!-- You can set this option
-            to automatically take information about lifecycles -->
+                <extensions>true</extensions> <!-- You can set this option to automatically take information about lifecycles -->
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <goals>
-                            <goal>compile</goal> <!-- You can skip the <goals> element
-                        if you enable extensions for the plugin -->
-                        </goals>
+<!--                        <phase>process-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>compile</goal> &lt;!&ndash; You can skip the <goals> element if you enable extensions for the plugin &ndash;&gt;-->
+<!--                        </goals>-->
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
@@ -62,10 +80,11 @@
                     </execution>
                     <execution>
                         <id>test-compile</id>
-                        <goals>
-                            <goal>test-compile</goal> <!-- You can skip the <goals> element
-                    if you enable extensions for the plugin -->
-                        </goals>
+<!--                        <phase>test-compile</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>test-compile</goal> &lt;!&ndash; You can skip the <goals> element-->
+<!--                    if you enable extensions for the plugin &ndash;&gt;-->
+<!--                        </goals>-->
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
@@ -80,7 +99,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by Maven -->
                     <execution>
@@ -116,6 +134,7 @@
                 <executions>
                     <execution>
                         <id>antlr</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
@@ -135,10 +154,34 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>dev.algo.parsetest.kolasuv15.MainKt</mainClass>
+                            <mainClass>${main.class}</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>${main.class}</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

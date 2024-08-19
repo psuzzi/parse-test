@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>parse-test-benchmark</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -28,6 +29,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>dev.algo</groupId>
+            <artifactId>parse-test-xtext</artifactId>
+<!--            <scope>compile</scope>-->
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
@@ -35,24 +43,28 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
+            <scope>compile</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.eclipse.xtext</groupId>-->
+<!--            <artifactId>org.eclipse.xtext.testing</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Kotlin compiled before Java sources, see https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources -->
+            <!-- compile Kotlin before Java, see https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <extensions>true</extensions> <!-- You can set this option
-            to automatically take information about lifecycles -->
+<!--                <version>${kotlin.version}</version>-->
+                <extensions>true</extensions> <!-- option to automatically take information about  lifecycles -->
                 <executions>
                     <execution>
                         <id>compile</id>
+                        <phase>process-sources</phase>
                         <goals>
-                            <goal>compile</goal> <!-- You can skip the <goals> element
-                        if you enable extensions for the plugin -->
+                            <goal>compile</goal> <!-- You can skip the <goals> element if you enable extensions for the plugin -->
                         </goals>
                         <configuration>
                             <sourceDirs>
@@ -63,9 +75,9 @@
                     </execution>
                     <execution>
                         <id>test-compile</id>
+                        <phase>test-compile</phase>
                         <goals>
-                            <goal>test-compile</goal> <!-- You can skip the <goals> element
-                    if you enable extensions for the plugin -->
+                            <goal>test-compile</goal> <!-- You can skip the <goals> element if you enable extensions for the plugin -->
                         </goals>
                         <configuration>
                             <sourceDirs>
