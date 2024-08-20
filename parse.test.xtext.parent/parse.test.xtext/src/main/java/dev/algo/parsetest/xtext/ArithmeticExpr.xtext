@@ -1,0 +1,26 @@
+grammar dev.algo.parsetest.xtext.ArithmeticExpr with org.eclipse.xtext.common.Terminals
+
+generate arithmeticExpr "http://www.algo.dev/parsetest/xtext/ArithmeticExpr"
+
+Model:
+	Expression?;
+
+Expression returns Expr:
+AddSub;
+
+AddSub returns Expr:
+//	MultDiv (({Add.left=current} '+' | {Sub.left=current} '-') right=MultDiv)*; // Specific rules
+    MultDiv ({AddSub.left=current} ('+' | '-') right=MultDiv)*; // Generic rule
+
+MultDiv returns Expr:
+//	Primary (({Mult.left=current} '*' | {Div.left=current} '/') right=Primary)*; // Specific rules
+    Primary ({AddSub.left=current} ('*' | '/') right=Primary)*; // Generic rule
+
+Primary returns Expr:
+	
+    NumberLiteral | '(' AddSub ')';
+
+NumberLiteral returns Expr:
+    value=INT;
+
+// Note: see also https://www.typefox.io/blog/parsing-expressions-with-xtext/
