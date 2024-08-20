@@ -3,6 +3,9 @@
 This project is for comparing the performances of different parsers.
 It was build in order to solve this kolasu issue: https://github.com/Strumenta/kolasu/issues/354
 
+See also this YT video with explanation:
+https://www.youtube.com/watch?v=owIi5YvDOmA
+
 The benchmarks are under `parse-test-benchmark`.
 
 ## Prerequisites
