@@ -1,0 +1,53 @@
+# Eclipse specific files
+# .project
+.classpath
+.settings/
+
+# Xtext generated files
+**/src-gen/
+**/xtend-gen/
+**/xtext-gen/
+**/model/generated
+
+# Exclude all .xtendbin files in any directory
+**/*.xtendbin
+
+# Exclude all .java._trace files in any directory
+**/*.java._trace
+
+/.idea/
+/*.iml
+
+# Maven specific files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle specific files
+.gradle/
+/build/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Binary files
+*.class
+*.jar
+*.war
+*.ear
+
+# Package managers
+node_modules/

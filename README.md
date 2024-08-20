@@ -66,8 +66,8 @@ parse-test                      [pom] parent pom
 ├── parse-test-benchmark        [jar] benchmark depend on: common, antlr, kolasu, xtext (java/kotlin)
 ├── parse-test-common           [jar] common classes (java)
 ├── parse-test-kolasu-v1-5      [jar] kolasu parser (kotlin)
-└── parse-test-xtext-parent     [pom] xtext parser parent [pom]
-    └── parse-test-xtext        [jar] xtext parser (java/xtend)
+└── parse.test.xtext.parent     [pom] xtext parser parent [pom]
+    └── parse.test.xtext        [jar] xtext parser (java/xtend)
 ```
 
 I choose to use maven to simplify the usage of some legacy framework.
@@ -96,7 +96,7 @@ mvn clean
 mvn clean package -pl parse-test-common -am
 mvn clean package -pl parse-test-antlr-v4 -am
 mvn clean package -pl parse-test-kolasu-v1-5 -am
-mvn clean package -pl parse-test-xtext-parent -am
+mvn clean package -pl parse.test.xtext.parent -am
 mvn clean package -pl parse-test-benchmark -am
 ```
 
@@ -107,7 +107,7 @@ This will ensure all modules are built in the correct order, using the most Upda
 After installing the modules locally, you can selectively cleanup your local mvn repo as follows:
 
 ```
-mvn dependency:purge-local-repository -DmanualInclude=dev.algo:parse-test,dev.algo:parse-test-antlr-v4,dev.algo:parse-test-benchmark,dev.algo:parse-test-common,dev.algo:parse-test-kolasu-v1-5,dev.algo:parse-test-xtext-parent,dev.algo:parse-test-xtext
+mvn dependency:purge-local-repository -DmanualInclude=dev.algo:parse-test,dev.algo:parse-test-antlr-v4,dev.algo:parse-test-benchmark,dev.algo:parse-test-common,dev.algo:parse-test-kolasu-v1-5,dev.algo:parse.test.xtext.parent,dev.algo:parse.test.xtext
 ```
 
 ## Troubleshooting

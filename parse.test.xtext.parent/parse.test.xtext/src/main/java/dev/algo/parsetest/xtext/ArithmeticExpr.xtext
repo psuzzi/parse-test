@@ -3,7 +3,7 @@ grammar dev.algo.parsetest.xtext.ArithmeticExpr with org.eclipse.xtext.common.Te
 generate arithmeticExpr "http://www.algo.dev/parsetest/xtext/ArithmeticExpr"
 
 Model:
-	Expression;
+	Expression?;
 
 Expression returns Expr:
 AddSub;

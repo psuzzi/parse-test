@@ -1,4 +1,8 @@
-package dev.algo.parsetest.benchmark;
+package dev.algo.parsetest.xtext.tests;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 import com.google.inject.Inject;
 import dev.algo.parsetest.xtext.arithmeticExpr.Model;
@@ -7,21 +11,19 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipse.xtext.testing.util.ParseHelper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(InjectionExtension.class)
 @InjectWith(ArithmeticExprInjectorProvider.class)
-public class XtextArithmeticExprParse2Test {
+public class ArithmeticExprXtextParseTest {
 
     @Inject
     private ParseHelper<Model> parseHelper;
 
-//    @Test
-//    FIXME: Uncomment and witness the "java.lang.NoSuchFieldError: EOF_TOKEN", likely caused by dependencies
-//    TODO: see https://github.com/psuzzi/parse-test/issues/2
+    @Test
     public void testLoadModel() throws Exception {
         String input = "(13 * 7) * (2 * 17)";
         Model result = parseHelper.parse(input);
@@ -33,5 +35,4 @@ public class XtextArithmeticExprParse2Test {
                 .map(Object::toString)
                 .toArray(String[]::new)));
     }
-
 }

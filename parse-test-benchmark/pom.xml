@@ -31,7 +31,7 @@
         </dependency>
         <dependency>
             <groupId>dev.algo</groupId>
-            <artifactId>parse-test-xtext</artifactId>
+            <artifactId>parse.test.xtext</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

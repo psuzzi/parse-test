@@ -10,7 +10,7 @@ Workflow {
 	component = XtextGenerator {
 		configuration = {
 			project = StandardProjectConfig {
-				baseName = "parse-test-xtext"
+				baseName = "parse.test.xtext"
 				rootPath = rootPath
 				runtimeTest = {
 					enabled = true
@@ -37,7 +37,8 @@ Workflow {
 				generateDeprecationValidation = true
 			}
 			generator = {
-				generateXtendStub = true
+				generateJavaMain = true
+				generateXtendStub = false
 			}
 			junitSupport = {
 				junitVersion = "5"
