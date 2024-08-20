@@ -58,7 +58,7 @@ internal class AntlrArithmeticExprBenchmarkTest {
         val inputSizes = listOf("small", "medium", "large")
         inputSizes.forEach { size ->
             val input = Files.readString(tempDir.resolve("$size.ae"))
-            logger.info("${size.uppercase()}: $input")
+            logger.fine("${size.uppercase()}: $input")
             assertTrue(fuzzer.isValidInput(input), "$size input should be valid")
         }
     }

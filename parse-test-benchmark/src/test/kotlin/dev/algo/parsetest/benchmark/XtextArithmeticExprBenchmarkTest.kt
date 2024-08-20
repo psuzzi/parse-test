@@ -1,14 +1,19 @@
 package dev.algo.parsetest.benchmark
 
+import com.google.inject.Injector
 import dev.algo.parsetest.antlrv4.ArithmeticExprGrammarFuzzer
 import dev.algo.parsetest.benchmark.util.GenerateTestCases
 import dev.algo.parsetest.common.BenchmarkData
+import dev.algo.parsetest.xtext.ArithmeticExprStandaloneSetup
 import dev.algo.parsetest.xtext.arithmeticExpr.Model
+import org.eclipse.xtext.testing.extensions.InjectionExtension
+import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import java.io.IOException
 import java.net.URISyntaxException
@@ -17,6 +22,7 @@ import java.nio.file.Paths
 import java.util.logging.Logger
 import kotlin.io.path.writeText
 
+@ExtendWith(InjectionExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class XtextArithmeticExprBenchmarkTest {
 
@@ -47,6 +53,15 @@ class XtextArithmeticExprBenchmarkTest {
         }
     }
 
+    @Test
+    fun firstTest(){
+        val setup = ArithmeticExprStandaloneSetup()
+        val injector: Injector = setup.createInjectorAndDoEMFRegistration()
+        val parseHelper = injector.getInstance(ParseHelper::class.java)
+        val model = parseHelper.parse("(13 * 7) * (2 * 17)")
+        assertNotNull(model)
+    }
+
     /**
      * Smoke test, check we can read files from a temporary directory
      * @throws IOException can be triggered by test
@@ -54,7 +69,7 @@ class XtextArithmeticExprBenchmarkTest {
     @Test
     fun testSmokeBenchmarkArithmeticExprInTempFolder() {
         val benchmark = XtextArithmeticExprBenchmark(tempDir)
-        val data: BenchmarkData<Model?> = benchmark.executeBenchmark()
+        val data = benchmark.executeBenchmark()
         assertNotNull(data, "Benchmark data should not be null")
         assertEquals(5, data.numberOfFiles, "Expected number of parsed files")
         logger.info("XTEXT SMOKE TEST $BR ${data.toJson(true)}")
