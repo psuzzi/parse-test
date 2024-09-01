@@ -115,7 +115,7 @@ mvn dependency:purge-local-repository -DmanualInclude=dev.algo:parse-test,dev.al
 
 ## Dependencies
 
-To check the dependencies, you can use the dependency-graph tool provided as part of the build tools:
+To check the dependencies, you can use the [dependency-graph](build-tools/dependency-graph) tool provided as part of the build tools:
 
 ```bash
 cd build-tools/dependency-graph
