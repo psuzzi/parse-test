@@ -113,6 +113,19 @@ After installing the modules locally, you can selectively cleanup your local mvn
 mvn dependency:purge-local-repository -DmanualInclude=dev.algo:parse-test,dev.algo:parse-test-antlr-v4,dev.algo:parse-test-benchmark,dev.algo:parse-test-common,dev.algo:parse-test-kolasu-v1-5,dev.algo:parse.test.xtext.parent,dev.algo:parse.test.xtext
 ```
 
+## Dependencies
+
+To check the dependencies, you can use the dependency-graph tool provided as part of the build tools:
+
+```bash
+cd build-tools/dependency-graph
+python3 generate_module_graph.py
+# optional, if graphviz is installed
+dot -Tpng output/module_dependencies.dot -o output/module_dependencies.png 
+```
+
+Alternatively, you can use the default maven plugin with `mvn dependency:tree`.
+
 ## Troubleshooting
 
 When building Xtext inside IntelliJ IDEA, you might have issues, because of:  [xtext/issue/1953 ](https://github.com/eclipse/xtext/issues/1953)and companion [issue/IDEA-262695](https://youtrack.jetbrains.com/issue/IDEA-262695)
