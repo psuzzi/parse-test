@@ -14,10 +14,20 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- parse-test-common main dependency -->
         <dependency>
             <groupId>dev.algo</groupId>
             <artifactId>parse-test-common</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- parse-test-common Test dependency (includes both test classes and test resources) -->
+        <dependency>
+            <groupId>dev.algo</groupId>
+            <artifactId>parse-test-common</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>

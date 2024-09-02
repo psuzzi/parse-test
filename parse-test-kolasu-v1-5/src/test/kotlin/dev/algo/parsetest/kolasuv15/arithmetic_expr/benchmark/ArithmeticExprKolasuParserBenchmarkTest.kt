@@ -1,43 +1,34 @@
-package dev.algo.parsetest.benchmark
+package dev.algo.parsetest.kolasuv15.arithmetic_expr.benchmark
 
-import dev.algo.parsetest.antlrv4.ArithmeticExprGrammarFuzzer
-import dev.algo.parsetest.benchmark.util.GenerateTestCases
+import dev.algo.parsetest.common.ParserBenchmarkTest
+import dev.algo.parsetest.kolasuv15.benchmark.ArithmeticExprKolasuParserBenchmark
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.logging.Logger
 import kotlin.io.path.writeText
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class KolasuArithmeticExprBenchmarkTest {
+class ArithmeticExprKolasuParserBenchmarkTest : ParserBenchmarkTest() {
 
-    companion object{
-        private val logger = Logger.getLogger(KolasuArithmeticExprBenchmarkTest::class.java.name)
-        private val BR = System.lineSeparator()
+    companion object {
+        private val logger: Logger = Logger.getLogger(ArithmeticExprKolasuParserBenchmarkTest::class.java.name)
+        private val BR: String = System.lineSeparator()
     }
 
     @TempDir
-    lateinit var tempDir:Path
+    lateinit var tempDir: Path
 
-    private lateinit var fuzzer: ArithmeticExprGrammarFuzzer
-
-    @BeforeEach
-    fun setup() {
-        logger.info("Initialize Test")
-        fuzzer = ArithmeticExprGrammarFuzzer()
-
+    private fun prepareTempDir(){
         val testCases = mapOf(
             "test1.ae" to "2 + 3 * 4",
             "test2.ae" to "5 - 1 / 2",
-            "small.ae" to fuzzer.generateInput("small"),
-            "medium.ae" to fuzzer.generateInput("medium"),
-            "large.ae" to fuzzer.generateInput("large")
         )
+        loadResourceFiles(testCases, RESOURCE_ARITHMETIC_EXPR, ".ae")
+        // Write inputs to temp dir for smoke test
         testCases.forEach { (filename, content) ->
             tempDir.resolve(filename).writeText(content)
         }
@@ -48,7 +39,10 @@ class KolasuArithmeticExprBenchmarkTest {
      */
     @Test
     fun testSmokeBenchmarkArithmeticExprInTempFolder() {
-        val benchmark = KolasuArithmeticExprBenchmark(tempDir)
+        prepareTempDir()
+        // get inputs from temp directory
+        val benchmark = ArithmeticExprKolasuParserBenchmark()
+        benchmark.loadDataFromPath(tempDir, ".ae")
         val data = benchmark.executeBenchmark()
         assertNotNull(data, "Benchmark data should not be null")
         assertEquals(5, data.numberOfFiles, "Expected number of parsed files")
@@ -57,20 +51,16 @@ class KolasuArithmeticExprBenchmarkTest {
 
     /**
      * The most complete test, against tens of generated inputs, stored in the project.
-     * See also: [GenerateTestCases]
+     *
      */
     @Test
     fun testFullBenchmarkArithmeticExprInProvidedFolder() {
-        val benchmarkFolderName = GenerateTestCases.ARITHMETIC_EXPR_GEN
-        val benchmarkFolderPath = javaClass.classLoader.getResource(benchmarkFolderName)?.toURI()?.let { Paths.get(it) }
-            ?: throw IllegalStateException("Cannot find benchmark folder: $benchmarkFolderName")
-
-        val benchmark = KolasuArithmeticExprBenchmark(benchmarkFolderPath)
+        // get input from resource folder (common jar)
+        val benchmark = ArithmeticExprKolasuParserBenchmark()
+        benchmark.loadDataFromResource(RESOURCE_ARITHMETIC_EXPR_GEN, ".ae")
         val data = benchmark.executeBenchmark()
-
         assertNotNull(data) { "Benchmark data should not be null" }
         assertEquals(90, data.numberOfFiles) { "Expected number of parsed files" }
-
         logger.info("KOLASU 1.5 FULL TEST $BR ${data.toJson()}")
     }
 

@@ -14,14 +14,14 @@ private const val N_SAMPLES = 30
 private const val EXT_AE = "ae"
 
 /**
- * Utility class responsible of generating sample files to test
+ * Utility class responsible for generating sample files to parse-test-common
  */
 object GenerateTestCases {
 
     private val logger = Logger.getLogger(this::class.java.name)
 
     const val ARITHMETIC_EXPR_GEN: String = "arithmetic_expr_gen"
-    private val PATH_AE_GEN: Path = Path.of("parse-test-benchmark/src/test/resources/", ARITHMETIC_EXPR_GEN)
+    private val PATH_AE_GEN: Path = Path.of("parse-test-common/src/test/resources/", ARITHMETIC_EXPR_GEN)
 
     /**
      * Triggers the generation of the sample files.

@@ -81,7 +81,7 @@ The subprojects are written in Java and Kotlin.
 ### Build
 
 In general, I prefer building with `mvn clean package`.
-That's because `mvn clan install` pollutes my local maven repo.
+That's because `mvn clean install` pollutes my local maven repo.
 
 The GitHub CI is governed by the `.github/workflows/maven.yml`, which executes:
 ```
@@ -92,15 +92,15 @@ mvn test
 If you need to run a specific plugin goal for a module, use the `-pl` flag from the root project.
 For instance `mvn antlr4:antlr -pl parse-test-antlr-v4` generates the ANTLR artefacts.
 
-You can cleanly build submodules starting from the root dir and executing the following commands:
+You can cleanly build submodules starting from the root dir and executing the following commands in order:
 
 ```
 mvn clean
-mvn clean package -pl parse-test-common -am
-mvn clean package -pl parse-test-antlr-v4 -am
-mvn clean package -pl parse-test-kolasu-v1-5 -am
-mvn clean package -pl parse.test.xtext.parent -am
-mvn clean package -pl parse-test-benchmark -am
+mvn package -pl parse-test-common -am
+mvn package -pl parse-test-antlr-v4 -am
+mvn package -pl parse-test-kolasu-v1-5 -am
+mvn package -pl parse.test.xtext.parent -am
+mvn package -pl parse-test-benchmark -am
 ```
 
 In case of issues with the first build, feel free use the Maven Reactor:
@@ -114,6 +114,8 @@ mvn dependency:purge-local-repository -DmanualInclude=dev.algo:parse-test,dev.al
 ```
 
 ## Dependencies
+
+![module_dependencies.png](build-tools/dependency-graph/output/module_dependencies.png)
 
 To check the dependencies, you can use the [dependency-graph](build-tools/dependency-graph) tool provided as part of the build tools:
 
@@ -138,8 +140,8 @@ If you run all via command line, there is no issue.
 
 Feel free to open issues
 To contribute improvements or add more parser tests, just open a PR.
-For adding a new parser modules, look at `parse-test-antlr-v4` or `parse-test-kolasu-v1-5`.
-For adding a new XXXBenchmark, look into `parse-test-benchmark`
+For adding a new parser modules, look at `parse-test-antlr-v4` (Java) or `parse-test-kolasu-v1-5` (Kotlin).
+For adding a new Parser Benchmark, look at [MockParserBenchmarkTest.java](parse-test-common/src/test/java/MockParserBenchmarkTest.java) in `parse-test-common`
 
 ## License
 

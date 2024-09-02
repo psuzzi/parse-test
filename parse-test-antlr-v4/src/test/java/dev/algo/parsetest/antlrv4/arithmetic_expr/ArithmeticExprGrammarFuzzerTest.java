@@ -34,7 +34,7 @@ class ArithmeticExprGrammarFuzzerTest {
         assertNotNull(large, "Large input is null");
 
         // set to info to see the sample output on console
-        logger.fine("SMALL: " + small);
+        logger.info("SMALL: " + small);
         logger.fine("MEDIUM: " + medium);
         logger.fine("LARGE: " + large);
 

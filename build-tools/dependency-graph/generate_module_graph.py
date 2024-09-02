@@ -70,7 +70,10 @@ def generate_dot_file(modules: Dict[ModuleInfo, Dependencies], output_file: str)
 
     with open(output_file, 'w') as f:
         f.write('digraph "Project Dependencies" {\n')
+#         f.write('  bgcolor="transparent";\n')  # enable transparency
         f.write('  node [style=filled];\n')
+#         f.write('  node [style="filled,setlinewidth(2)", color="#2E8B57", fontcolor="black"];\n')  # Sea Green color for node borders
+#         f.write('  edge [color="#2E8B57", penwidth=1.5];\n')  # Sea Green color for edges
 
         # define nodes
         for module in modules_in_graph:
@@ -79,11 +82,15 @@ def generate_dot_file(modules: Dict[ModuleInfo, Dependencies], output_file: str)
             f.write(f'  "{name}" [fillcolor={color}];\n')
 
         # define edges
+        added_edges = set() # keep track of edges we've already added
         for module, deps in modules.items():
             if module in modules_in_graph:
-                for dep in deps:
+                for dep in set(deps): # use set() to remove duplicate in deps
                     if tuple(dep.split(':')) in modules_in_graph:
-                        f.write(f'  "{format_module_name(*module)}" -> "{format_module_name(*dep.split(':'))}";\n')
+                        edge = (format_module_name(*module), format_module_name(*dep.split(':')))
+                        if( edge not in added_edges):
+                            f.write(f'  "{edge[0]}" -> "{edge[1]}";\n')
+                            added_edges.add(edge)
 
         f.write('}\n')
 
