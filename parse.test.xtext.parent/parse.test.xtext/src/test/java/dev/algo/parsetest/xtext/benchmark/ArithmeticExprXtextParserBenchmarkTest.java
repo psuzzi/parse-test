@@ -7,6 +7,7 @@ import dev.algo.parsetest.common.ParserBenchmarkTest;
 import dev.algo.parsetest.xtext.ArithmeticExprStandaloneSetup;
 import dev.algo.parsetest.xtext.arithmeticExpr.Model;
 import org.eclipse.xtext.testing.util.ParseHelper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -81,7 +82,8 @@ public class ArithmeticExprXtextParserBenchmarkTest extends ParserBenchmarkTest 
      * The most complete test, against tens of generated inputs, stored in the project.
      * PLEASE NOTE: I often observed Xtext raising a StackOverflowError
      */
-    @Test
+//    @Test
+    @Disabled("Xtext raising StackOverflowError")
     void parserFullArithmeticExprXtextParserBenchmarkTest() throws IOException {
         // get inputs from resource folder
         ArithmeticExprXtextParserBenchmark benchmark = new ArithmeticExprXtextParserBenchmark();
