@@ -1,0 +1,20 @@
+digraph "Project Dependencies" {
+  node [style=filled];
+  "parse-test-antlr-v4" [fillcolor=lightblue];
+  "parse.test.xtext" [fillcolor=lightblue];
+  "antlr4" [fillcolor=white];
+  "xtext-antlr-generator" [fillcolor=white];
+  "org.eclipse.xtext.testing" [fillcolor=white];
+  "parse-test-benchmark" [fillcolor=lightblue];
+  "parse-test-kolasu-v1-5" [fillcolor=lightblue];
+  "parse-test-common" [fillcolor=lightblue];
+  "parse.test.xtext" -> "org.eclipse.xtext.testing";
+  "parse.test.xtext" -> "xtext-antlr-generator";
+  "parse.test.xtext" -> "parse-test-common";
+  "parse-test-benchmark" -> "parse-test-common";
+  "parse-test-benchmark" -> "parse-test-antlr-v4";
+  "parse-test-antlr-v4" -> "antlr4";
+  "parse-test-antlr-v4" -> "parse-test-common";
+  "parse-test-kolasu-v1-5" -> "antlr4";
+  "parse-test-kolasu-v1-5" -> "parse-test-common";
+}

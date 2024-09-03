@@ -14,10 +14,19 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- Main dependency -->
         <dependency>
             <groupId>dev.algo</groupId>
             <artifactId>parse-test-common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <!-- Test dependency (includes both test classes and test resources) -->
+        <dependency>
+            <groupId>dev.algo</groupId>
+            <artifactId>parse-test-common</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
@@ -70,7 +79,7 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
-<!--                <extensions>true</extensions>-->
+                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -111,6 +120,11 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
 
         </plugins>

@@ -18,6 +18,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -26,14 +31,38 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>dev.algo.parsetest.common.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <executions>
+                    <!-- package java resources -->
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <mainClass>dev.algo.parsetest.common.Main</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <!-- package test resources -->
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+<!--                        <configuration>-->
+<!--                            <includes>-->
+<!--                                <include>**/*.class</include>-->
+<!--                                <include>**/*.ae</include>-->
+<!--                                <include>**/arithmetic_expr/**</include>-->
+<!--                                <include>**/arithmetic_expr_gen/**</include>-->
+<!--                            </includes>-->
+<!--                        </configuration>-->
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

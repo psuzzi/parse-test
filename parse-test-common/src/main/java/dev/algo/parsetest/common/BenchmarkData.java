@@ -5,13 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * Generic class representing BenchmarkData for a parser producing the generic type T as AST
@@ -28,29 +25,16 @@ public class BenchmarkData <T>{
     private long totalMemoryUsed = 0;
 
     /**
-     * Initialize the {@link BenchmarkData} with path pointing to a folder and an extension to identify the files to parse
-     * @param folderPath {@link Path} to the containing folder
-     * @param extension String representing the extension
-     * @throws IOException can be triggered by walking the folder in search of the files
+     * Initialize the {@link BenchmarkData} with a string representing the base folder, and an extension to identify
+     * the files to parse
+     * @param folderPathString representing the containing folder
+     * @param fileContents map file-names:file-contents representing the files
      */
-    public BenchmarkData(Path folderPath, String extension) throws IOException {
-        this.folderPath = folderPath;
-        try (Stream<Path> pathStream = Files.walk(folderPath)) {
-            this.benchmarks = pathStream
-                    .filter(path -> path.toString().endsWith(extension))
-                    .map(this::createSingleParseBenchmark)
-                    .filter(Objects::nonNull)
-                    .toList();
-        }
-    }
-
-    private SingleParseBenchmark<T> createSingleParseBenchmark(Path path)  {
-        try {
-            return new SingleParseBenchmark<>(path);
-        } catch (IOException e) {
-            logger.severe("Error reading file: " + path);
-            return null;
-        }
+    public BenchmarkData(String folderPathString, Map<String, String> fileContents){
+        this.folderPath = Path.of(folderPathString); // not defined for a set of files
+        this.benchmarks = fileContents.entrySet().stream()
+                .map(entry -> new SingleParseBenchmark<T>(folderPathString, entry.getKey(), entry.getValue()))
+                .toList();
     }
 
     public List<SingleParseBenchmark<T>> getBenchmarks() {
@@ -115,7 +99,7 @@ public class BenchmarkData <T>{
             ArrayNode benchmarkArray = rootNode.putArray("benchmarks");
             for (SingleParseBenchmark<T> benchmark : benchmarks) {
                 ObjectNode benchmarkNode = mapper.createObjectNode();
-                benchmarkNode.put("file_name", benchmark.getFilePath().getFileName().toString());
+                benchmarkNode.put("file_name", benchmark.getFileName());
                 benchmarkNode.put("parse_time_ms", benchmark.getParseDuration());
                 benchmarkArray.add(benchmarkNode);
             }

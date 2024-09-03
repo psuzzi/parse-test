@@ -1,37 +1,36 @@
 package dev.algo.parsetest.common;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 /**
  * Class representing a single parse benchmark for a parser producing the generic type T as AST
  * @param <T>
  */
 public class SingleParseBenchmark<T> {
-    private final Path filePath;
+    private final String basePath;
+    private final String fileName;
     private final String input;
     private T parseResult;
     private long parseDuration;
 
+
     /**
-     * Initialize the {@link SingleParseBenchmark} by providing a path to the file to be parsed.
-     * The initialization consists of loading the file in memory as a string
-     * @param filePath
-     * @throws IOException
+     * Initialize the {@link SingleParseBenchmark} with a base path, fileName and input
+     * @param basePath path to the base folder as string. Used for diagnostics, can be null
+     * @param fileName file name as string. Must be non null
+     * @param input file content
      */
-    public SingleParseBenchmark(Path filePath) throws IOException {
-        this.filePath = filePath;
-        this.input = new String(Files.readAllBytes(filePath));
+    public SingleParseBenchmark(String basePath, String fileName, String input) {
+        this.basePath = basePath;
+        this.fileName = fileName;
+        this.input = input;
     }
 
-    public Path getFilePath() {
-        return filePath;
+    public String getFileName() {
+        return fileName;
     }
 
     /**
      * Input to be parsed as string
-     * @return
+     * @return benchmark input
      */
     public String getInput() {
         return input;
@@ -39,7 +38,7 @@ public class SingleParseBenchmark<T> {
 
     /**
      * Parse result to be retrieved later
-     * @return
+     * @return parse result object (AST)
      */
     public T getParseResult() {
         return parseResult;
@@ -55,7 +54,7 @@ public class SingleParseBenchmark<T> {
 
     /**
      * Parsing duration
-     * @return
+     * @return parse duration in millis
      */
     public long getParseDuration() {
         return parseDuration;
